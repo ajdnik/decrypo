@@ -1,14 +1,15 @@
 
-<a name="0.2.3"></a>
-## [0.2.3](https://github.com/ajdnik/decrypo/compare/0.2.2...0.2.3) (2019-12-05)
+<a name="0.2.13"></a>
+## [0.2.13](https://github.com/ajdnik/decrypo/compare/0.2.12...0.2.13) (2019-12-06)
 
 ### Fix
 
-* release script
+* release change log location
+* travis release tag
 
 
-<a name="0.2.2"></a>
-## [0.2.2](https://github.com/ajdnik/decrypo/compare/0.2.1...0.2.2) (2019-12-05)
+<a name="0.2.12"></a>
+## [0.2.12](https://github.com/ajdnik/decrypo/compare/0.2.11...0.2.12) (2019-12-06)
 
 ### Chore
 
@@ -17,29 +18,55 @@
 
 ### Fix
 
-* sha 256 sum
-* release script
+* travis release create
 
 
-<a name="0.2.1"></a>
-## [0.2.1](https://github.com/ajdnik/decrypo/compare/0.2.0...0.2.1) (2019-12-05)
+<a name="0.2.11"></a>
+## [0.2.11](https://github.com/ajdnik/decrypo/compare/0.2.10...0.2.11) (2019-12-06)
 
 ### Chore
 
+* version bumped
+* updated changelog
+
+### Fix
+
+* generate release change log cont.
+
+
+<a name="0.2.10"></a>
+## 0.2.10 (2019-12-06)
+
+### Chore
+
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* empty test
+* osx deployment script
+* initial travis config
+* command usage in readme
+* comments
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
 * version bumped
 * updated changelog
 * update readme
-
-### Feat
-
-* version flag
-
-
-<a name="0.2.0"></a>
-## 0.2.0 (2019-12-05)
-
-### Chore
-
 * version bumped
 * updated changelog
 * updated changelog
@@ -50,11 +77,26 @@
 
 ### Feat
 
+* updated release workflow
+* travis build config
+* env variables via parameters
+* windows deploy script
+* version flag
 * progress bar
 * no placeholders
 
 ### Fix
 
+* generate release change log
+* push tag
+* travis release creation
+* travis tagged branch blacklist
+* github release files param
+* remove hardcoded values
+* osx deploy
+* release script
+* sha 256 sum
+* release script
 * removed changelog from failed release
 * removed changelog from failed release
 * duplicate course repository
