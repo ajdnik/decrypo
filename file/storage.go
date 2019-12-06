@@ -44,7 +44,7 @@ func (s *Storage) generatePath(mod *decryptor.Module) (string, error) {
 	return path, nil
 }
 
-// Save stores the decrypted video clip to teh filesystem
+// Save stores the decrypted video clip to the filesystem
 func (s *Storage) Save(c decryptor.Clip, r io.Reader) (string, error) {
 	path, err := s.generatePath(c.Module)
 	if err != nil {

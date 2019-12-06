@@ -1,4 +1,8 @@
 # decrypo
+
+[![Build Status](https://travis-ci.org/ajdnik/decrypo.svg?branch=master "Travis CI status")](https://travis-ci.org/ajdnik/decrypo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ajdnik/decrypo)](https://goreportcard.com/report/github.com/ajdnik/decrypo)
+
 Decrypt Pluralsight videos into .mp4 format.
 
 ### Install

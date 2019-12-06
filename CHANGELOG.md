@@ -1,63 +1,84 @@
 
-<a name="0.2.13"></a>
-## [0.2.13](https://github.com/ajdnik/decrypo/compare/0.2.12...0.2.13) (2019-12-06)
-
-### Fix
-
-* release change log location
-* travis release tag
-
-
-<a name="0.2.12"></a>
-## [0.2.12](https://github.com/ajdnik/decrypo/compare/0.2.11...0.2.12) (2019-12-06)
+<a name="0.2.23"></a>
+## [0.2.23](https://github.com/ajdnik/decrypo/compare/0.2.20...0.2.23) (2019-12-07)
 
 ### Chore
 
 * version bumped
 * updated changelog
+* remove old deploy scripts
+* version bumped
+* updated changelog
+* release job on tag push
+* build artifacts
+* different go dep install
+* use context workspace
+* dump contexts
+* print workspace location
+* print out home
+* master push action build matrix
+* build artifacts for both platforms
+* disable travis builds
+* github actions push
 
 ### Fix
 
-* travis release create
+* release_name missing
+* run release after artifacts
+* github actions on tags
+* powershell archive script
+* yaml syntax
+* full dep path
+* use github context to build path
+* yaml syntax
+* yaml syntax
+* use home as gopath
+* use default gopath
+* setup go env
+* try and create GOBIN
+* mkdir command location
+* create GOBIN
+* remove dep install
+* dep install on both platforms
 
 
-<a name="0.2.11"></a>
-## [0.2.11](https://github.com/ajdnik/decrypo/compare/0.2.10...0.2.11) (2019-12-06)
+<a name="0.2.20"></a>
+## [0.2.20](https://github.com/ajdnik/decrypo/compare/0.2.14...0.2.20) (2019-12-06)
 
 ### Chore
 
 * version bumped
 * updated changelog
+* readme badges
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
+* version bumped
+* updated changelog
 
 ### Fix
 
-* generate release change log cont.
+* release body
+* brew update before install
+* json escape release notes
+* travis release export as string
+* travis release export
+* travis release description
 
 
-<a name="0.2.10"></a>
-## 0.2.10 (2019-12-06)
+<a name="0.2.14"></a>
+## 0.2.14 (2019-12-06)
 
 ### Chore
 
 * version bumped
 * updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* version bumped
-* updated changelog
-* empty test
-* osx deployment script
-* initial travis config
+* travis build changes
 * command usage in readme
 * comments
 * version bumped
@@ -77,23 +98,12 @@
 
 ### Feat
 
-* updated release workflow
-* travis build config
-* env variables via parameters
-* windows deploy script
 * version flag
 * progress bar
 * no placeholders
 
 ### Fix
 
-* generate release change log
-* push tag
-* travis release creation
-* travis tagged branch blacklist
-* github release files param
-* remove hardcoded values
-* osx deploy
 * release script
 * sha 256 sum
 * release script
