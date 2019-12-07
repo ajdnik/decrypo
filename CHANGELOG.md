@@ -1,45 +1,18 @@
 
-<a name="0.2.23"></a>
-## [0.2.23](https://github.com/ajdnik/decrypo/compare/0.2.20...0.2.23) (2019-12-07)
+<a name="0.2.24"></a>
+## [0.2.24](https://github.com/ajdnik/decrypo/compare/0.2.20...0.2.24) (2019-12-07)
 
 ### Chore
 
-* version bumped
-* updated changelog
-* remove old deploy scripts
-* version bumped
-* updated changelog
-* release job on tag push
-* build artifacts
-* different go dep install
-* use context workspace
-* dump contexts
-* print workspace location
-* print out home
-* master push action build matrix
-* build artifacts for both platforms
-* disable travis builds
-* github actions push
+* github actions
 
 ### Fix
 
-* release_name missing
-* run release after artifacts
-* github actions on tags
-* powershell archive script
-* yaml syntax
-* full dep path
-* use github context to build path
-* yaml syntax
-* yaml syntax
-* use home as gopath
-* use default gopath
-* setup go env
-* try and create GOBIN
-* mkdir command location
-* create GOBIN
-* remove dep install
-* dep install on both platforms
+* github actions badge
+
+### Refactor
+
+* github actions rename
 
 
 <a name="0.2.20"></a>
