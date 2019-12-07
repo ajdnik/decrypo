@@ -1,4 +1,4 @@
-name: Push to master
+name: push-to-master
 on:
   push:
     branches:
@@ -9,6 +9,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    name: test-${{ matrix.os }}
     steps:
       - name: Setup Go 1.13
         uses: actions/setup-go@v1

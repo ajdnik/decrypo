@@ -1,4 +1,4 @@
-name: Push new tag
+name: push-new-tag
 on:
   create:
     tags:
@@ -9,6 +9,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    name: build-artifacts-${{ matrix.os }}
     steps:
       - name: Setup Go 1.13
         uses: actions/setup-go@v1
@@ -81,7 +82,7 @@ jobs:
           path: ${{ runner.workspace }}/src/github.com/${{ github.repository }}/dist
   create_release:
     runs-on: ubuntu-latest
-    name: Create Release
+    name: create-release
     needs: build_artifacts
     steps:
       - name: Checkout Code
