@@ -3,6 +3,7 @@ package pluralsight
 import (
 	"database/sql"
 	"fmt"
+	"sort"
 
 	"github.com/ajdnik/decrypo/decryptor"
 	// sqlite3 driver
@@ -18,26 +19,62 @@ type CourseRepository struct {
 	Path string
 }
 
+// getCaptionsForClip retrieves clip captions and parses them into a struct
+func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
+	raw, err := db.Query(fmt.Sprintf("select StartTime, EndTime, Text from ClipTranscript where ClipId=%v", clipID))
+	if err != nil {
+		return err
+	}
+	defer raw.Close()
+	for raw.Next() {
+		var startMs int
+		var endMs int
+		var text string
+		err = raw.Scan(&startMs, &endMs, &text)
+		if err != nil {
+			return err
+		}
+		caption := decryptor.Caption{
+			StartMs: startMs,
+			EndMs:   endMs,
+			Text:    text,
+			Clip:    clip,
+		}
+		clip.Captions = append(clip.Captions, caption)
+	}
+	// sort captions by start time
+	sort.Slice(clip.Captions, func(i, j int) bool {
+		return clip.Captions[i].StartMs < clip.Captions[j].StartMs
+	})
+	return nil
+}
+
 // getClipsForModule retrieves video clips from an sqlite database that belong to a module
 func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select Title, Name from Clip where ModuleId=%v order by ClipIndex asc", modID))
+	raw, err := db.Query(fmt.Sprintf("select Id, Title, Name from Clip where ModuleId=%v order by ClipIndex asc", modID))
 	if err != nil {
 		return err
 	}
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
+		var id int
 		var title string
-		var id string
-		err = raw.Scan(&title, &id)
+		var uid string
+		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
 		clip := decryptor.Clip{
-			Order:  ord,
-			Title:  title,
-			ID:     id,
-			Module: mod,
+			Order:    ord,
+			Title:    title,
+			ID:       uid,
+			Module:   mod,
+			Captions: make([]decryptor.Caption, 0),
+		}
+		err = getCaptionsForClip(id, &clip, db)
+		if err != nil {
+			return err
 		}
 		mod.Clips = append(mod.Clips, clip)
 		ord++

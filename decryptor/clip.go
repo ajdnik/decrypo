@@ -4,10 +4,11 @@ import "io"
 
 // Clip represents a video clip
 type Clip struct {
-	Order  int
-	Title  string
-	ID     string
-	Module *Module
+	Order    int
+	Title    string
+	ID       string
+	Module   *Module
+	Captions []Caption
 }
 
 // ClipRepository defines an interface for fetching video clips

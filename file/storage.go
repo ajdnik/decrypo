@@ -45,12 +45,12 @@ func (s *Storage) generatePath(mod *decryptor.Module) (string, error) {
 }
 
 // Save stores the decrypted video clip to the filesystem
-func (s *Storage) Save(c decryptor.Clip, r io.Reader) (string, error) {
+func (s *Storage) Save(c decryptor.Clip, r io.Reader, ext decryptor.Extension) (string, error) {
 	path, err := s.generatePath(c.Module)
 	if err != nil {
 		return unknown, err
 	}
-	filename := filepath.Join(path, fmt.Sprintf("%v.mp4", pathFriendlyTitle(fmt.Sprintf("%v %v", c.Order, c.Title))))
+	filename := filepath.Join(path, fmt.Sprintf("%v.%v", pathFriendlyTitle(fmt.Sprintf("%v %v", c.Order, c.Title)), string(ext)))
 	buf, err := ioutil.ReadAll(r)
 	if err != nil {
 		return unknown, err

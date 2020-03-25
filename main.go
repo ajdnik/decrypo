@@ -44,6 +44,7 @@ func main() {
 		Storage: &file.Storage{
 			Path: *output,
 		},
+		CaptionEncoder: &file.SrtEncoder{},
 		Clips: &pluralsight.ClipRepository{
 			Path: *clips,
 		},

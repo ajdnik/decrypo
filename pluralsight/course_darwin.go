@@ -2,7 +2,9 @@ package pluralsight
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"sort"
 
 	"github.com/ajdnik/decrypo/decryptor"
 	// sqlite3 driver
@@ -18,26 +20,75 @@ type CourseRepository struct {
 	Path string
 }
 
+// captionEntry structure is a JSON object which is stored in the database and represents a single caption for a clip
+type captionEntry struct {
+	RelativeStartTime int    `json:"relativeStartTime"`
+	RelativeEndTime   int    `json:"relativeEndTime"`
+	Text              string `json:"text"`
+}
+
+// getCaptionsForClip retrieves clip captions and parses them into a struct
+func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
+	raw, err := db.Query(fmt.Sprintf("select ZCAPTIONS from ZCLIPCAPTIONSCD where ZCLIP=%v and ZLANGUAGECODE='en'", clipID))
+	if err != nil {
+		return err
+	}
+	defer raw.Close()
+	if !raw.Next() {
+		return nil
+	}
+	var data []byte
+	err = raw.Scan(&data)
+	if err != nil {
+		return err
+	}
+	var entries []captionEntry
+	err = json.Unmarshal(data, &entries)
+	if err != nil {
+		return err
+	}
+	// sort captions by start time
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].RelativeStartTime < entries[j].RelativeStartTime
+	})
+	for _, entry := range entries {
+		caption := decryptor.Caption{
+			StartMs: entry.RelativeStartTime,
+			EndMs:   entry.RelativeEndTime,
+			Text:    entry.Text,
+			Clip:    clip,
+		}
+		clip.Captions = append(clip.Captions, caption)
+	}
+	return nil
+}
+
 // getClipsForModule retrieves video clips from an sqlite database that belong to a module
 func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select ZTITLE, ZID from ZCLIPCD where ZMODULE=%v order by Z_FOK_MODULE asc", modID))
+	raw, err := db.Query(fmt.Sprintf("select Z_PK, ZTITLE, ZID from ZCLIPCD where ZMODULE=%v order by Z_FOK_MODULE asc", modID))
 	if err != nil {
 		return err
 	}
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
+		var id int
 		var title string
-		var id string
-		err = raw.Scan(&title, &id)
+		var uid string
+		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
 		clip := decryptor.Clip{
-			Order:  ord,
-			Title:  title,
-			ID:     id,
-			Module: mod,
+			Order:    ord,
+			Title:    title,
+			ID:       uid,
+			Module:   mod,
+			Captions: make([]decryptor.Caption, 0),
+		}
+		err = getCaptionsForClip(id, &clip, db)
+		if err != nil {
+			return err
 		}
 		mod.Clips = append(mod.Clips, clip)
 		ord++
