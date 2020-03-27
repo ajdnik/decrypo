@@ -2,6 +2,7 @@ package pluralsight
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/ajdnik/decrypo/decryptor"
@@ -11,6 +12,8 @@ import (
 
 var (
 	unknownCount = -1
+	unknownStr   = ""
+	ErrNoAuthor  = errors.New("author not found")
 )
 
 // CourseRepository fetches video course info from an sqlite database
@@ -45,9 +48,31 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 	return nil
 }
 
+// getAuthorForCourse retrieves author name for a particular course from database
+func getAuthorForCourse(cID int, db *sql.DB) (string, error) {
+	raw, err := db.Query(fmt.Sprintf("select ZID from ZAUTHORHEADERCD where Z_PK in (select Z_3AUTHORS from Z_3COURSEHEADERS where Z_14COURSEHEADERS=%v)", cID))
+	if err != nil {
+		return unknownStr, err
+	}
+	defer raw.Close()
+	if !raw.Next() {
+		return unknownStr, ErrNoAuthor
+	}
+	var author string
+	err = raw.Scan(&author)
+	if err != nil {
+		return unknownStr, err
+	}
+	return author, nil
+}
+
 // getModulesForCourse retrieves course modules from an sqlite database that belong to a video course
 func getModulesForCourse(cID int, c *decryptor.Course, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select Z_PK, ZTITLE from ZMODULECD where ZCOURSE=%v order by Z_FOK_COURSE asc", cID))
+	author, err := getAuthorForCourse(cID, db)
+	if err != nil {
+		return err
+	}
+	raw, err := db.Query(fmt.Sprintf("select Z_PK, ZTITLE, ZID from ZMODULECD where ZCOURSE=%v order by Z_FOK_COURSE asc", cID))
 	if err != nil {
 		return err
 	}
@@ -56,13 +81,16 @@ func getModulesForCourse(cID int, c *decryptor.Course, db *sql.DB) error {
 	for raw.Next() {
 		var id int
 		var title string
-		err = raw.Scan(&id, &title)
+		var uid string
+		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
 		module := decryptor.Module{
 			Order:  ord,
 			Title:  title,
+			ID:     uid,
+			Author: author,
 			Clips:  make([]decryptor.Clip, 0),
 			Course: c,
 		}
@@ -83,7 +111,7 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 		return nil, err
 	}
 	defer db.Close()
-	raw, err := db.Query("select Z_PK, ZTITLE from ZCOURSEHEADERCD")
+	raw, err := db.Query("select Z_PK, ZTITLE, ZID from ZCOURSEHEADERCD")
 	if err != nil {
 		return nil, err
 	}
@@ -92,12 +120,14 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 	for raw.Next() {
 		var id int
 		var title string
-		err = raw.Scan(&id, &title)
+		var uid string
+		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return courses, err
 		}
 		course := decryptor.Course{
 			Title:   title,
+			ID:      uid,
 			Modules: make([]decryptor.Module, 0),
 		}
 		err = getModulesForCourse(id, &course, db)

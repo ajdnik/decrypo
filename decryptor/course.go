@@ -3,6 +3,7 @@ package decryptor
 // Course represents a video course
 type Course struct {
 	Title   string
+	ID      string
 	Modules []Module
 }
 

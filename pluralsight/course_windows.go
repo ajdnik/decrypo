@@ -47,7 +47,7 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 
 // getModulesForCourse retrieves course modules from an sqlite database that belong to a video course
 func getModulesForCourse(cName string, c *decryptor.Course, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select Id, Title from Module where CourseName='%v' order by ModuleIndex asc", cName))
+	raw, err := db.Query(fmt.Sprintf("select Id, Title, Name, AuthorName from Module where CourseName='%v' order by ModuleIndex asc", cName))
 	if err != nil {
 		return err
 	}
@@ -56,13 +56,17 @@ func getModulesForCourse(cName string, c *decryptor.Course, db *sql.DB) error {
 	for raw.Next() {
 		var id int
 		var title string
-		err = raw.Scan(&id, &title)
+		var uid string
+		var author string
+		err = raw.Scan(&id, &title, &uid, &author)
 		if err != nil {
 			return err
 		}
 		module := decryptor.Module{
 			Order:  ord,
 			Title:  title,
+			ID:     uid,
+			Author: author,
 			Clips:  make([]decryptor.Clip, 0),
 			Course: c,
 		}
@@ -90,17 +94,18 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 	defer raw.Close()
 	courses := make([]decryptor.Course, 0)
 	for raw.Next() {
-		var name string
+		var uid string
 		var title string
-		err = raw.Scan(&name, &title)
+		err = raw.Scan(&uid, &title)
 		if err != nil {
 			return courses, err
 		}
 		course := decryptor.Course{
 			Title:   title,
+			ID:      uid,
 			Modules: make([]decryptor.Module, 0),
 		}
-		err = getModulesForCourse(name, &course, db)
+		err = getModulesForCourse(uid, &course, db)
 		if err != nil {
 			return courses, err
 		}

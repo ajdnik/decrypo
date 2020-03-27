@@ -21,13 +21,13 @@ func (s *Service) DecryptAll(evt OnDecrypted) error {
 	for _, course := range courses {
 		for _, module := range course.Modules {
 			for _, clip := range module.Clips {
-				if !s.Clips.ExistsByID(clip.ID) {
+				if !s.Clips.Exists(&clip) {
 					if evt != nil {
 						evt(clip, nil)
 					}
 					continue
 				}
-				r, err := s.Clips.GetContentByID(clip.ID)
+				r, err := s.Clips.GetContent(&clip)
 				if err != nil {
 					return err
 				}
