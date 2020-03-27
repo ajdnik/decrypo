@@ -20,7 +20,7 @@ type CourseRepository struct {
 
 // getClipsForModule retrieves video clips from an sqlite database that belong to a module
 func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select Title, Name from Clip where ModuleId=%v order by ClipIndex asc", modID))
+	raw, err := db.Query(fmt.Sprintf("select Title, Name from Clip where ModuleId='%v' order by ClipIndex asc", modID))
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 
 // getModulesForCourse retrieves course modules from an sqlite database that belong to a video course
 func getModulesForCourse(cName string, c *decryptor.Course, db *sql.DB) error {
-	raw, err := db.Query(fmt.Sprintf("select Id, Title from Module where CourseName=%v order by ModuleIndex asc", cName))
+	raw, err := db.Query(fmt.Sprintf("select Id, Title from Module where CourseName='%v' order by ModuleIndex asc", cName))
 	if err != nil {
 		return err
 	}
