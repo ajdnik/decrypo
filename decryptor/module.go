@@ -4,6 +4,8 @@ package decryptor
 type Module struct {
 	Order  int
 	Title  string
+	ID     string
+	Author string
 	Clips  []Clip
 	Course *Course
 }
