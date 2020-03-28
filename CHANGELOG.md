@@ -1,9 +1,30 @@
 
+<a name="0.2.25"></a>
+## [0.2.25](https://github.com/ajdnik/decrypo/compare/refs/heads/captions...0.2.25) (2020-03-28)
+
+### Fix
+
+* fixed decryption key
+* author column name in database
+* windows clip path
+* missing quotes in sqlite queries
+
+
+<a name="refs/heads/captions"></a>
+## [refs/heads/captions](https://github.com/ajdnik/decrypo/compare/0.2.24...refs/heads/captions) (2019-12-07)
+
+### Feat
+
+* extract captions from clips and convert them to srt
+
+
 <a name="0.2.24"></a>
 ## [0.2.24](https://github.com/ajdnik/decrypo/compare/0.2.20...0.2.24) (2019-12-07)
 
 ### Chore
 
+* version bumped
+* updated changelog
 * github actions
 
 ### Fix
