@@ -23,3 +23,5 @@ Run the command from your terminal application and define an `-output` flag wher
 ```bash
 decrypo -output "./Course Videos/"
 ```
+
+To find out more about other flags use the `decrypo --help`.
