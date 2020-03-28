@@ -1,6 +1,19 @@
 
+<a name="0.2.26"></a>
+## [0.2.26](https://github.com/ajdnik/decrypo/compare/0.2.25...0.2.26) (2020-03-28)
+
+### Fix
+
+* wrong macos course title
+
+
 <a name="0.2.25"></a>
-## [0.2.25](https://github.com/ajdnik/decrypo/compare/refs/heads/captions...0.2.25) (2020-03-28)
+## [0.2.25](https://github.com/ajdnik/decrypo/compare/0.2.24...0.2.25) (2020-03-28)
+
+### Chore
+
+* version bumped
+* updated changelog
 
 ### Fix
 
@@ -8,14 +21,6 @@
 * author column name in database
 * windows clip path
 * missing quotes in sqlite queries
-
-
-<a name="refs/heads/captions"></a>
-## [refs/heads/captions](https://github.com/ajdnik/decrypo/compare/0.2.24...refs/heads/captions) (2019-12-07)
-
-### Feat
-
-* extract captions from clips and convert them to srt
 
 
 <a name="0.2.24"></a>
