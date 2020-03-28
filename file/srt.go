@@ -21,7 +21,7 @@ func msToString(ms int64) string {
 	minutes := int64(d.Minutes()) - hours*60
 	seconds := int64(d.Seconds()) - int64(d.Minutes())*60
 	milliseconds := d.Milliseconds() - int64(d.Seconds())*1000
-	return fmt.Sprintf("%02d:%02d:%02d,%d", hours, minutes, seconds, milliseconds)
+	return fmt.Sprintf("%02d:%02d:%02d,%03d", hours, minutes, seconds, milliseconds)
 }
 
 // Encode converts clip captions into an srt file
