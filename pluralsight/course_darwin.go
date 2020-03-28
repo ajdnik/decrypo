@@ -163,7 +163,7 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 		return nil, err
 	}
 	defer db.Close()
-	raw, err := db.Query("select Z_PK, ZTITLE, ZID from ZCOURSEHEADERCD")
+	raw, err := db.Query("select ZDETAILS, ZTITLE, ZID from ZCOURSEHEADERCD")
 	if err != nil {
 		return nil, err
 	}
