@@ -1,6 +1,27 @@
 
+<a name="0.3.0"></a>
+## [0.3.0](https://github.com/ajdnik/decrypo/compare/0.2.26...0.3.0) (2020-03-28)
+
+### Chore
+
+* help flag in readme
+
+### Feat
+
+* extract captions from clips and convert them to srt
+
+### Fix
+
+* srt time format
+
+
 <a name="0.2.26"></a>
 ## [0.2.26](https://github.com/ajdnik/decrypo/compare/0.2.25...0.2.26) (2020-03-28)
+
+### Chore
+
+* version bumped
+* updated changelog
 
 ### Fix
 
