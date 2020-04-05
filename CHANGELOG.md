@@ -1,9 +1,27 @@
 
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/ajdnik/decrypo/compare/0.3.0...0.3.1) (2020-04-05)
+
+### Chore
+
+* command output example
+
+### Feat
+
+* improved output
+
+### Fix
+
+* sql null value handling
+
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://github.com/ajdnik/decrypo/compare/0.2.26...0.3.0) (2020-03-28)
 
 ### Chore
 
+* version bumped
+* updated changelog
 * help flag in readme
 
 ### Feat
