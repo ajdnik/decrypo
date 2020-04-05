@@ -32,7 +32,7 @@ type captionEntry struct {
 }
 
 // getCaptionsForClip retrieves clip captions and parses them into a struct
-func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
+func getCaptionsForClip(clipID int32, clip *decryptor.Clip, db *sql.DB) error {
 	raw, err := db.Query(fmt.Sprintf("select ZCAPTIONS from ZCLIPCAPTIONSCD where ZCLIP=%v and ZLANGUAGECODE='en'", clipID))
 	if err != nil {
 		return err
@@ -45,6 +45,10 @@ func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
 	err = raw.Scan(&data)
 	if err != nil {
 		return err
+	}
+	// If caption data is null fail silently
+	if data == nil {
+		return nil
 	}
 	var entries []captionEntry
 	err = json.Unmarshal(data, &entries)
@@ -68,7 +72,7 @@ func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
 }
 
 // getClipsForModule retrieves video clips from an sqlite database that belong to a module
-func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
+func getClipsForModule(modID int32, mod *decryptor.Module, db *sql.DB) error {
 	raw, err := db.Query(fmt.Sprintf("select Z_PK, ZTITLE, ZID from ZCLIPCD where ZMODULE=%v order by Z_FOK_MODULE asc", modID))
 	if err != nil {
 		return err
@@ -76,21 +80,25 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
-		var id int
-		var title string
-		var uid string
+		var id sql.NullInt32
+		var title sql.NullString
+		var uid sql.NullString
 		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
+		// If any of the values are null skip the clip
+		if !id.Valid || !title.Valid || !uid.Valid {
+			continue
+		}
 		clip := decryptor.Clip{
 			Order:    ord,
-			Title:    title,
-			ID:       uid,
+			Title:    title.String,
+			ID:       uid.String,
 			Module:   mod,
 			Captions: make([]decryptor.Caption, 0),
 		}
-		err = getCaptionsForClip(id, &clip, db)
+		err = getCaptionsForClip(id.Int32, &clip, db)
 		if err != nil {
 			return err
 		}
@@ -101,7 +109,7 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 }
 
 // getAuthorForCourse retrieves author name for a particular course from database
-func getAuthorForCourse(cID int, db *sql.DB) (string, error) {
+func getAuthorForCourse(cID int32, db *sql.DB) (string, error) {
 	raw, err := db.Query(fmt.Sprintf("select ZID from ZAUTHORHEADERCD where Z_PK in (select Z_3AUTHORS from Z_3COURSEHEADERS where Z_14COURSEHEADERS=%v)", cID))
 	if err != nil {
 		return unknownStr, err
@@ -110,16 +118,19 @@ func getAuthorForCourse(cID int, db *sql.DB) (string, error) {
 	if !raw.Next() {
 		return unknownStr, ErrNoAuthor
 	}
-	var author string
+	var author sql.NullString
 	err = raw.Scan(&author)
 	if err != nil {
 		return unknownStr, err
 	}
-	return author, nil
+	if !author.Valid {
+		return unknownStr, ErrNoAuthor
+	}
+	return author.String, nil
 }
 
 // getModulesForCourse retrieves course modules from an sqlite database that belong to a video course
-func getModulesForCourse(cID int, c *decryptor.Course, db *sql.DB) error {
+func getModulesForCourse(cID int32, c *decryptor.Course, db *sql.DB) error {
 	author, err := getAuthorForCourse(cID, db)
 	if err != nil {
 		return err
@@ -131,22 +142,26 @@ func getModulesForCourse(cID int, c *decryptor.Course, db *sql.DB) error {
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
-		var id int
-		var title string
-		var uid string
+		var id sql.NullInt32
+		var title sql.NullString
+		var uid sql.NullString
 		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
+		// If any of the values are null skip the module
+		if !id.Valid || !title.Valid || !uid.Valid {
+			continue
+		}
 		module := decryptor.Module{
 			Order:  ord,
-			Title:  title,
-			ID:     uid,
+			Title:  title.String,
+			ID:     uid.String,
 			Author: author,
 			Clips:  make([]decryptor.Clip, 0),
 			Course: c,
 		}
-		err = getClipsForModule(id, &module, db)
+		err = getClipsForModule(id.Int32, &module, db)
 		if err != nil {
 			return err
 		}
@@ -170,19 +185,23 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 	defer raw.Close()
 	courses := make([]decryptor.Course, 0)
 	for raw.Next() {
-		var id int
-		var title string
-		var uid string
+		var id sql.NullInt32
+		var title sql.NullString
+		var uid sql.NullString
 		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return courses, err
 		}
+		// If any of the read values are NULL ignore the whole course
+		if !id.Valid || !title.Valid || !uid.Valid {
+			continue
+		}
 		course := decryptor.Course{
-			Title:   title,
-			ID:      uid,
+			Title:   title.String,
+			ID:      uid.String,
 			Modules: make([]decryptor.Module, 0),
 		}
-		err = getModulesForCourse(id, &course, db)
+		err = getModulesForCourse(id.Int32, &course, db)
 		if err != nil {
 			return courses, err
 		}

@@ -20,24 +20,28 @@ type CourseRepository struct {
 }
 
 // getCaptionsForClip retrieves clip captions and parses them into a struct
-func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
+func getCaptionsForClip(clipID int32, clip *decryptor.Clip, db *sql.DB) error {
 	raw, err := db.Query(fmt.Sprintf("select StartTime, EndTime, Text from ClipTranscript where ClipId=%v", clipID))
 	if err != nil {
 		return err
 	}
 	defer raw.Close()
 	for raw.Next() {
-		var startMs int
-		var endMs int
-		var text string
+		var startMs sql.NullInt32
+		var endMs sql.NullInt32
+		var text sql.NullString
 		err = raw.Scan(&startMs, &endMs, &text)
 		if err != nil {
 			return err
 		}
+		// If any of the read values are NULL ignore the whole caption entry
+		if !startMs.Valid || !endMs.Valid || !text.Valid {
+			continue
+		}
 		caption := decryptor.Caption{
-			StartMs: startMs,
-			EndMs:   endMs,
-			Text:    text,
+			StartMs: int(startMs.Int32),
+			EndMs:   int(endMs.Int32),
+			Text:    text.String,
 			Clip:    clip,
 		}
 		clip.Captions = append(clip.Captions, caption)
@@ -50,7 +54,7 @@ func getCaptionsForClip(clipID int, clip *decryptor.Clip, db *sql.DB) error {
 }
 
 // getClipsForModule retrieves video clips from an sqlite database that belong to a module
-func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
+func getClipsForModule(modID int32, mod *decryptor.Module, db *sql.DB) error {
 	raw, err := db.Query(fmt.Sprintf("select Id, Title, Name from Clip where ModuleId=%v order by ClipIndex asc", modID))
 	if err != nil {
 		return err
@@ -58,21 +62,25 @@ func getClipsForModule(modID int, mod *decryptor.Module, db *sql.DB) error {
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
-		var id int
-		var title string
-		var uid string
+		var id sql.NullInt32
+		var title sql.NullString
+		var uid sql.NullString
 		err = raw.Scan(&id, &title, &uid)
 		if err != nil {
 			return err
 		}
+		// If any of the read values are NULL ignore the whole clip
+		if !id.Valid || !title.Valid || !uid.Valid {
+			continue
+		}
 		clip := decryptor.Clip{
 			Order:    ord,
-			Title:    title,
-			ID:       uid,
+			Title:    title.String,
+			ID:       uid.String,
 			Module:   mod,
 			Captions: make([]decryptor.Caption, 0),
 		}
-		err = getCaptionsForClip(id, &clip, db)
+		err = getCaptionsForClip(id.Int32, &clip, db)
 		if err != nil {
 			return err
 		}
@@ -91,23 +99,27 @@ func getModulesForCourse(cName string, c *decryptor.Course, db *sql.DB) error {
 	defer raw.Close()
 	ord := 1
 	for raw.Next() {
-		var id int
-		var title string
-		var uid string
-		var author string
+		var id sql.NullInt32
+		var title sql.NullString
+		var uid sql.NullString
+		var author sql.NullString
 		err = raw.Scan(&id, &title, &uid, &author)
 		if err != nil {
 			return err
 		}
+		// If any of the read values are NULL skip the whole module
+		if !id.Valid || !title.Valid || !uid.Valid || !author.Valid {
+			continue
+		}
 		module := decryptor.Module{
 			Order:  ord,
-			Title:  title,
-			ID:     uid,
-			Author: author,
+			Title:  title.String,
+			ID:     uid.String,
+			Author: author.String,
 			Clips:  make([]decryptor.Clip, 0),
 			Course: c,
 		}
-		err = getClipsForModule(id, &module, db)
+		err = getClipsForModule(id.Int32, &module, db)
 		if err != nil {
 			return err
 		}
@@ -131,18 +143,22 @@ func (r *CourseRepository) FindAll() ([]decryptor.Course, error) {
 	defer raw.Close()
 	courses := make([]decryptor.Course, 0)
 	for raw.Next() {
-		var uid string
-		var title string
+		var uid sql.NullString
+		var title sql.NullString
 		err = raw.Scan(&uid, &title)
 		if err != nil {
 			return courses, err
 		}
+		// If any of the read values are NULL ignore the whole course
+		if !uid.Valid || !title.Valid {
+			continue
+		}
 		course := decryptor.Course{
-			Title:   title,
-			ID:      uid,
+			Title:   title.String,
+			ID:      uid.String,
 			Modules: make([]decryptor.Module, 0),
 		}
-		err = getModulesForCourse(uid, &course, db)
+		err = getModulesForCourse(uid.String, &course, db)
 		if err != nil {
 			return courses, err
 		}
