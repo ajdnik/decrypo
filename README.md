@@ -21,7 +21,12 @@ brew install decrypo
 Run the command from your terminal application and define an `-output` flag where the decrypted videos should be stored.
 
 ```bash
-decrypo -output "./Course Videos/"
+$ decrypo -output "./Course Videos/"
+Found 20 clips in database.
+Decrypting clips and extracting captions...
+20 / 20 [------------------------------------------------>] 100% 35 p/s
+Successfully decrypted 20 of 20 clips.
+You can find them at ./Course Videos/
 ```
 
 To find out more about other flags use the `decrypo --help`.
