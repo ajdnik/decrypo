@@ -50,12 +50,18 @@ func main() {
 		},
 		Courses: &courses,
 	}
+	fmt.Println("Found", clipCount, "clips in database.")
+	fmt.Println("Decrypting clips and extracting captions...")
 	bar := pb.StartNew(clipCount)
+	successCount := 0
 	err = svc.DecryptAll(func(_ decryptor.Clip, _ *string) {
 		bar.Increment()
+		successCount++
 	})
 	bar.Finish()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Successfully decrypted", successCount, "of", clipCount, "clips.")
+	fmt.Println("You can find them at", *output)
 }
