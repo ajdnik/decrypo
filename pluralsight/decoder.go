@@ -10,9 +10,12 @@ import (
 type Decoder struct{}
 
 // Decode builds a video decryption stream
-func (d *Decoder) Decode(r io.Reader) io.Reader {
-	dec := newVideoDecryptor(r)
-	return &dec
+func (d *Decoder) Decode(r io.Reader) (io.Reader, error) {
+	dec, err := videoDecryptorFactory(r)
+	if err != nil {
+		return nil, err
+	}
+	return &dec, nil
 }
 
 // Extension returns the decoded file extension

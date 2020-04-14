@@ -32,7 +32,12 @@ func (s *Service) DecryptAll(evt OnDecrypted) error {
 				if err != nil {
 					return err
 				}
-				dec := s.Decoder.Decode(r)
+				dec, err := s.Decoder.Decode(r)
+				// if decoder fails, skip the clip
+				if err != nil {
+					r.Close()
+					continue
+				}
 				file, err := s.Storage.Save(clip, dec, s.Decoder.Extension())
 				if err != nil {
 					return err

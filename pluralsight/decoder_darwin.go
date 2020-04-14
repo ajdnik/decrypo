@@ -2,11 +2,11 @@ package pluralsight
 
 import "io"
 
-// newVideoDecryptor generates a new decryption io.Reader implementation
-func newVideoDecryptor(r io.Reader) videoDecryptor {
+// videoDecryptorFactory generates a new decryption io.Reader implementation
+func videoDecryptorFactory(r io.Reader) (videoDecryptor, error) {
 	return videoDecryptor{
 		Reader: r,
-	}
+	}, nil
 }
 
 type videoDecryptor struct {

@@ -4,6 +4,6 @@ import "io"
 
 // Decoder defines an interface for decoding reader streams
 type Decoder interface {
-	Decode(io.Reader) io.Reader
+	Decode(io.Reader) (io.Reader, error)
 	Extension() Extension
 }
