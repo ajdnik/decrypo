@@ -3,8 +3,8 @@ package pluralsight
 import "io"
 
 // videoDecryptorFactory generates a new decryption io.Reader implementation
-func videoDecryptorFactory(r io.Reader) (videoDecryptor, error) {
-	return videoDecryptor{
+func videoDecryptorFactory(r io.Reader) (*videoDecryptor, error) {
+	return &videoDecryptor{
 		Reader: r,
 	}, nil
 }

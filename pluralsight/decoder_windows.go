@@ -27,37 +27,51 @@ func xorBuff(n, offset int, buf, key1, key2 []byte) {
 	}
 }
 
+// verifyXorKeys checks if the provided stream can be decrypted using these keys
+func verifyXorKeys(r *bufio.Reader, key1, key2 []byte) (bool, error) {
+	d, err := r.Peek(3)
+	if err != nil {
+		return false, err
+	}
+	// decrypt the first 3 bytes
+	xorBuff(3, 0, d, key1, key2)
+	valid := false
+	if d[0] == 0 && d[1] == 0 && d[2] == 0 {
+		valid = true
+	}
+	// reverse the previous decryption
+	xorBuff(3, 0, d, key1, key2)
+	return valid, nil
+}
+
 // videoDecryptorFactory generates a new decryption io.Reader implementation based on the stream
-func videoDecryptorFactory(r io.Reader) (videoDecryptor, error) {
+func videoDecryptorFactory(r io.Reader) (*videoDecryptor, error) {
 	buff := bufio.NewReader(r)
-	d, err := buff.Peek(3)
+	key1v1, _ := hex.DecodeString(str1v1)
+	key2v1, _ := hex.DecodeString(str2v1)
+	ok, err := verifyXorKeys(buff, key1v1, key2v1)
 	if err != nil {
 		return nil, err
 	}
-	key1v1, _ := hex.DecodeString(str1v1)
-	key2v1, _ := hex.DecodeString(str2v1)
-	// decrypt the first 3 bytes
-	xorBuff(3, 0, d, key1v1, key2v1)
-	// valid mp4 header should start with 3 zero bytes
-	if d[0] == 0 && d[1] == 0 && d[2] == 0 {
-		return videoDecryptor{
-			Reader: &buff,
-			Buf1:   key1v1,
-			Buf2:   key2v1,
+	if ok {
+		return &videoDecryptor{
+			Reader: buff,
+			Key1:   key1v1,
+			Key2:   key2v1,
 			Offset: 0,
 		}, nil
 	}
-	// reverse the previous decryption
-	xorBuff(3, 0, d, key1v1, key2v1)
 	key1v2, _ := hex.DecodeString(str1v2)
 	key2v2, _ := hex.DecodeString(str2v2)
-	// decrypt the first 3 bytes using second set of keys
-	xorBuff(3, 0, d, key1v2, key2v2)
-	if d[0] == 0 && d[1] == 0 && d[2] == 0 {
-		return videoDecryptor{
-			Reader: &buff,
-			Buf1:   key1v2,
-			Buf2:   key2v2,
+	ok, err = verifyXorKeys(buff, key1v2, key2v2)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		return &videoDecryptor{
+			Reader: buff,
+			Key1:   key1v2,
+			Key2:   key2v2,
 			Offset: 0,
 		}, nil
 	}

@@ -15,7 +15,7 @@ func (d *Decoder) Decode(r io.Reader) (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &dec, nil
+	return dec, nil
 }
 
 // Extension returns the decoded file extension
