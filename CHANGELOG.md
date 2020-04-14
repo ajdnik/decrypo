@@ -1,9 +1,23 @@
 
+<a name="0.3.2"></a>
+## [0.3.2](https://github.com/ajdnik/decrypo/compare/0.3.1...0.3.2) (2020-04-14)
+
+### Feat
+
+* windows decryption using v2 keys
+
+### Refactor
+
+* decryption type detect
+
+
 <a name="0.3.1"></a>
 ## [0.3.1](https://github.com/ajdnik/decrypo/compare/0.3.0...0.3.1) (2020-04-05)
 
 ### Chore
 
+* version bumped
+* updated changelog
 * command output example
 
 ### Feat
