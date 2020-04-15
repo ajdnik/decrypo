@@ -16,6 +16,12 @@ tag: changelog
 	git tag ${VERSION}
 	git push origin ${VERSION}
 
+test:
+	go test -v ./...
+
+testcov:
+	go test -v -coverprofile coverage.out -coverpkg=./... ./... 
+
 default: changelog
 
-.PHONY: changelog devdeps tag
+.PHONY: changelog devdeps tag test testcov

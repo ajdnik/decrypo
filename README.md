@@ -1,6 +1,7 @@
 # decrypo
 
 [![Build Status](https://github.com/ajdnik/decrypo/workflows/push-to-master/badge.svg "GitHub Actions status")](https://github.com/ajdnik/decrypo/actions?query=workflow%3Apush-to-master)
+[![Coverage Status](https://coveralls.io/repos/github/ajdnik/decrypo/badge.svg?branch=master)](https://coveralls.io/github/ajdnik/decrypo?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ajdnik/decrypo)](https://goreportcard.com/report/github.com/ajdnik/decrypo)
 
 Decrypt Pluralsight videos into .mp4 format.

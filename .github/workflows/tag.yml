@@ -35,7 +35,7 @@ jobs:
       - name: Run Tests
         run: |
           cd $GOPATH/src/github.com/$GITHUB_REPOSITORY
-          go test ./tests/...
+          go test ./...
         shell: bash
       - name: Build Artifacts
         run: |

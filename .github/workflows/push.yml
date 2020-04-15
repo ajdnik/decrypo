@@ -2,7 +2,7 @@ name: push-to-master
 on:
   push:
     branches:
-      - master
+      - "*"
 jobs:
   test:
     strategy:
@@ -31,9 +31,59 @@ jobs:
           cd $GOPATH/src/github.com/$GITHUB_REPOSITORY
           curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
           $GOBIN/dep ensure
+          go get golang.org/x/tools/cmd/cover
         shell: bash
       - name: Run Tests
         run: |
           cd $GOPATH/src/github.com/$GITHUB_REPOSITORY
-          go test ./tests/...
+          go test -v -covermode=atomic -coverprofile=coverage.out -coverpkg=./... ./...
+        shell: bash
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ runner.os }}
+          path: ${{ runner.workspace }}/src/github.com/${{ github.repository }}/coverage.out
+  coveralls:
+    runs-on: ubuntu-latest
+    name: coveralls
+    needs: test
+    steps:
+      - name: Setup Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        env:
+          GOPATH: ${{ runner.workspace }}
+          GOBIN: ${{ runner.workspace }}/bin
+      - name: Checkout Code
+        uses: actions/checkout@v1
+        with:
+          path: src/github.com/${{ github.repository }}
+      - name: Setup Go Environment
+        run: |
+          mkdir -p $GOPATH/bin
+        shell: bash
+      - name: Get Dependencies
+        run: |
+          go get golang.org/x/tools/cmd/cover
+          go get github.com/mattn/goveralls
+          go get github.com/wadey/gocovmerge
+        shell: bash
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: Windows
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: macOS
+      - name: Merge reports
+        run: |
+          $GOBIN/gocovmerge macOS/coverage.out Windows/coverage.out > coverage.out
+        shell: bash
+      - name: Send coverage
+        env:
+          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $GOBIN/goveralls -coverprofile=coverage.out -service=github
         shell: bash
