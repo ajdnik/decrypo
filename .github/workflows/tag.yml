@@ -2,7 +2,7 @@ name: push-new-tag
 on:
   create:
     tags:
-      - "*.*.*"
+      - "refs/tags/*.*.*"
 jobs:
   build_artifacts:
     strategy:

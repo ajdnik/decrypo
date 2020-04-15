@@ -2,7 +2,7 @@ name: push-to-master
 on:
   push:
     branches:
-      - "*"
+      - master
 jobs:
   test:
     strategy:
