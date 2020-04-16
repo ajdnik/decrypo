@@ -6,6 +6,7 @@ changelog:
 
 devdeps:
 	go get -u github.com/git-chglog/git-chglog/cmd/git-chglog
+	go get -u golang.org/x/tools/cmd/cover
 
 tag: changelog
 	git add CHANGELOG.md
@@ -20,7 +21,8 @@ test:
 	go test -v ./...
 
 testcov:
-	go test -v -coverprofile coverage.out -coverpkg=./... ./... 
+	go test -coverprofile coverage.out -coverpkg=./... ./...
+	go tool cover -html=coverage.out
 
 default: changelog
 
