@@ -4,8 +4,8 @@ import "io"
 
 // Caption represents a video clip caption
 type Caption struct {
-	StartMs int
-	EndMs   int
+	StartMs uint64
+	EndMs   uint64
 	Text    string
 	Clip    *Clip
 }

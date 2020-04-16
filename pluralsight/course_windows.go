@@ -2,6 +2,7 @@ package pluralsight
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -12,6 +13,9 @@ import (
 
 var (
 	unknownCount = -1
+	// ErrNegativeCaptionTime is returned when caption entries read from database contain
+	// negative values for either StartTime or EndTime
+	ErrNegativeCaptionTime = errors.New("captions have a negative start or end time")
 )
 
 // CourseRepository fetches video course info from an sqlite database
@@ -38,9 +42,14 @@ func getCaptionsForClip(clipID int32, clip *decryptor.Clip, db *sql.DB) error {
 		if !startMs.Valid || !endMs.Valid || !text.Valid {
 			continue
 		}
+		// Return error of StartTime or EndTime are negative numbers
+		// They represent miliseconds since the start of the clip so they should always be positive or 0
+		if startMs.Int32 < 0 || endMs.Int32 < 0 {
+			return ErrNegativeCaptionTime
+		}
 		caption := decryptor.Caption{
-			StartMs: int(startMs.Int32),
-			EndMs:   int(endMs.Int32),
+			StartMs: uint64(startMs.Int32),
+			EndMs:   uint64(endMs.Int32),
 			Text:    text.String,
 			Clip:    clip,
 		}

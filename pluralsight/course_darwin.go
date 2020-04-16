@@ -26,8 +26,8 @@ type CourseRepository struct {
 
 // captionEntry structure is a JSON object which is stored in the database and represents a single caption for a clip
 type captionEntry struct {
-	RelativeStartTime int    `json:"relativeStartTime"`
-	RelativeEndTime   int    `json:"relativeEndTime"`
+	RelativeStartTime uint64 `json:"relativeStartTime"`
+	RelativeEndTime   uint64 `json:"relativeEndTime"`
 	Text              string `json:"text"`
 }
 
