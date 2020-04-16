@@ -101,13 +101,13 @@ func (mcr *mockCourseRepository) FindAll() ([]decryptor.Course, error) {
 	return []decryptor.Course{course}, nil
 }
 
-type mockReadCloser struct{}
+type stubReadCloser struct{}
 
-func (mrc *mockReadCloser) Read([]byte) (int, error) {
+func (mrc *stubReadCloser) Read([]byte) (int, error) {
 	return 0, nil
 }
 
-func (mrc *mockReadCloser) Close() error {
+func (mrc *stubReadCloser) Close() error {
 	return nil
 }
 
@@ -120,7 +120,7 @@ func (mclr *mockClipRepository) GetContent(*decryptor.Clip) (io.ReadCloser, erro
 	if mclr.ShowError {
 		return nil, errMockClips
 	}
-	return &mockReadCloser{}, nil
+	return &stubReadCloser{}, nil
 }
 
 func (mclr *mockClipRepository) Exists(*decryptor.Clip) bool {

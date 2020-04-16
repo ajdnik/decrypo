@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/ajdnik/decrypo/build"
@@ -42,7 +43,9 @@ func main() {
 	svc := decryptor.Service{
 		Decoder: &pluralsight.Decoder{},
 		Storage: &file.Storage{
-			Path: *output,
+			Path:      *output,
+			MkdirAll:  os.MkdirAll,
+			WriteFile: ioutil.WriteFile,
 		},
 		CaptionEncoder: &file.SrtEncoder{},
 		Clips: &pluralsight.ClipRepository{

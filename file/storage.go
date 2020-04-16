@@ -18,9 +18,17 @@ var (
 	unknown = ""
 )
 
+// MkdirAll is a type declaration for the os.MkdirAll function
+type MkdirAll func(string, os.FileMode) error
+
+// WriteFile is a type declaration for the ioutil.WriteFile function
+type WriteFile func(string, []byte, os.FileMode) error
+
 // Storage implements the video clip storage interface which stores clips to the filesystem
 type Storage struct {
-	Path string
+	Path      string
+	MkdirAll  MkdirAll
+	WriteFile WriteFile
 }
 
 func pathFriendlyTitle(title string) string {
@@ -37,7 +45,7 @@ func (s *Storage) generatePath(mod *decryptor.Module) (string, error) {
 	}
 	path := filepath.Join(s.Path, pathFriendlyTitle(mod.Course.Title))
 	path = filepath.Join(path, pathFriendlyTitle(fmt.Sprintf("%v - %v", mod.Order, mod.Title)))
-	err := os.MkdirAll(path, os.ModePerm)
+	err := s.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		return path, err
 	}
@@ -55,5 +63,5 @@ func (s *Storage) Save(c decryptor.Clip, r io.Reader, ext decryptor.Extension) (
 	if err != nil {
 		return unknown, err
 	}
-	return filename, ioutil.WriteFile(filename, buf, os.ModePerm)
+	return filename, s.WriteFile(filename, buf, os.ModePerm)
 }
