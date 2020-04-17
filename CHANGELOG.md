@@ -1,9 +1,29 @@
 
+<a name="0.3.18"></a>
+## [0.3.18](https://github.com/ajdnik/decrypo/compare/0.3.3...0.3.18) (2020-04-18)
+
+### Chore
+
+* version bumped
+* updated changelog
+
+### Feat
+
+* 32bit compilation
+
+### Fix
+
+* windows cross compilation
+* 32bit compilation
+
+
 <a name="0.3.3"></a>
 ## [0.3.3](https://github.com/ajdnik/decrypo/compare/0.3.2...0.3.3) (2020-04-17)
 
 ### Chore
 
+* version bumped
+* updated changelog
 * missing extension test
 * untested code paths
 * clip repository tests
