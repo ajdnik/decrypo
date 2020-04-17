@@ -1,6 +1,43 @@
 
+<a name="0.3.3"></a>
+## [0.3.3](https://github.com/ajdnik/decrypo/compare/0.3.2...0.3.3) (2020-04-17)
+
+### Chore
+
+* missing extension test
+* untested code paths
+* clip repository tests
+* file exists tests
+* test coverage command shows html
+* storage tests
+* expanded windows decoder tests
+* extended service tests
+
+### Feat
+
+* initial unit tests
+
+### Fix
+
+* windows long file path
+* failing windows tests
+* windows tests
+* handle negative values in caption times
+* github actions triggers
+
+### Refactor
+
+* remove unneeded properties
+* version as standalone string
+
+
 <a name="0.3.2"></a>
 ## [0.3.2](https://github.com/ajdnik/decrypo/compare/0.3.1...0.3.2) (2020-04-14)
+
+### Chore
+
+* version bumped
+* updated changelog
 
 ### Feat
 
