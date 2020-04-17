@@ -14,5 +14,5 @@ type Clip struct {
 // ClipRepository defines an interface for fetching video clips
 type ClipRepository interface {
 	GetContent(*Clip) (io.ReadCloser, error)
-	Exists(*Clip) bool
+	Exists(*Clip) (bool, error)
 }

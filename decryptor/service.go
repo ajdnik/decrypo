@@ -22,7 +22,7 @@ func (s *Service) DecryptAll(evt OnDecrypted) error {
 	for _, course := range courses {
 		for _, module := range course.Modules {
 			for _, clip := range module.Clips {
-				if !s.Clips.Exists(&clip) {
+				if ok, _ := s.Clips.Exists(&clip); !ok {
 					if evt != nil {
 						evt(clip, nil)
 					}

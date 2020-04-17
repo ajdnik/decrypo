@@ -123,8 +123,8 @@ func (mclr *mockClipRepository) GetContent(*decryptor.Clip) (io.ReadCloser, erro
 	return &stubReadCloser{}, nil
 }
 
-func (mclr *mockClipRepository) Exists(*decryptor.Clip) bool {
-	return mclr.DoesExist
+func (mclr *mockClipRepository) Exists(*decryptor.Clip) (bool, error) {
+	return mclr.DoesExist, nil
 }
 
 type mockCallback struct {

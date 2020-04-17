@@ -49,7 +49,9 @@ func main() {
 		},
 		CaptionEncoder: &file.SrtEncoder{},
 		Clips: &pluralsight.ClipRepository{
-			Path: *clips,
+			Path:       *clips,
+			FileOpen:   os.Open,
+			FileExists: file.Exists,
 		},
 		Courses: &courses,
 	}
