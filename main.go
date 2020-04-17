@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/ajdnik/decrypo/build"
 	"github.com/ajdnik/decrypo/decryptor"
@@ -22,15 +24,31 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defOut := "./Pluralsight Courses/"
+	if runtime.GOOS == "windows" {
+		abs, err := filepath.Abs(defOut)
+		if err != nil {
+			panic(err)
+		}
+		defOut = file.ToUNC(abs)
+	}
 	clips := flag.String("clips", defClip, "location of clip .psv files")
 	db := flag.String("db", defDb, "location of sqlite file")
-	output := flag.String("output", "./Pluralsight Courses/", "location of decrypted courses")
+	output := flag.String("output", defOut, "location of decrypted courses")
 	version := flag.Bool("v", false, "print tool version")
 	flag.Parse()
 
 	if *version {
 		fmt.Println(build.Version)
 		os.Exit(0)
+	}
+
+	if runtime.GOOS == "windows" {
+		abs, err := filepath.Abs(*output)
+		if err != nil {
+			panic(err)
+		}
+		*output = file.ToUNC(abs)
 	}
 
 	courses := pluralsight.CourseRepository{

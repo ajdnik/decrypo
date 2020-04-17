@@ -3,6 +3,8 @@ package pluralsight
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/ajdnik/decrypo/file"
 )
 
 var (
@@ -15,7 +17,7 @@ func GetClipPath() (string, error) {
 	if err != nil {
 		return unknown, err
 	}
-	return filepath.Join(home, "AppData\\Local\\Pluralsight\\courses"), nil
+	return file.ToUNC(filepath.Join(home, "AppData\\Local\\Pluralsight\\courses")), nil
 }
 
 // GetDbPath returns a default path where Pluralsight desktop app stores its sqlite database
