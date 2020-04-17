@@ -1,6 +1,7 @@
 package pluralsight_test
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -8,12 +9,20 @@ import (
 	"github.com/ajdnik/decrypo/pluralsight"
 )
 
+var (
+	errMockOpen = errors.New("mock open error")
+)
+
 type mockOpen struct {
-	Arg string
+	Arg        string
+	ThrowError bool
 }
 
 func (mo *mockOpen) Open(f string) (*os.File, error) {
 	mo.Arg = f
+	if mo.ThrowError {
+		return nil, errMockOpen
+	}
 	return nil, nil
 }
 
@@ -56,24 +65,28 @@ func TestClipRepository_GetContent(t *testing.T) {
 }
 
 var getContentErrorsTest = []struct {
-	desc string
-	in   *decryptor.Clip
-	err  error
+	desc     string
+	in       *decryptor.Clip
+	throwErr bool
+	err      error
 }{
-	{"clip exists", &decryptor.Clip{}, nil},
-	{"no clip", nil, pluralsight.ErrClipUndefined},
+	{"clip exists", &decryptor.Clip{}, false, nil},
+	{"no clip", nil, false, pluralsight.ErrClipUndefined},
+	{"open failed", &decryptor.Clip{}, true, errMockOpen},
 }
 
 func TestClipRepository_GetContentErrors(t *testing.T) {
-	open := mockOpen{}
 	exists := mockExists{}
 	repo := pluralsight.ClipRepository{
 		Path:       "/tmp/",
-		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}
 	for _, tt := range getContentErrorsTest {
 		t.Run(tt.desc, func(t *testing.T) {
+			open := mockOpen{
+				ThrowError: tt.throwErr,
+			}
+			repo.FileOpen = open.Open
 			_, err := repo.GetContent(tt.in)
 			if err != tt.err {
 				t.Errorf("got %v, want %v", err, tt.err)
@@ -128,7 +141,7 @@ func TestClipRepository_ExistsErrors(t *testing.T) {
 		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}
-	for _, tt := range getContentErrorsTest {
+	for _, tt := range existsErrorsTest {
 		t.Run(tt.desc, func(t *testing.T) {
 			_, err := repo.Exists(tt.in)
 			if err != tt.err {

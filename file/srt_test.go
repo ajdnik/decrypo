@@ -43,3 +43,13 @@ func TestSrtEncoder_Encode(t *testing.T) {
 		})
 	}
 }
+
+func TestSrtEncoder_Extension(t *testing.T) {
+	encoder := file.SrtEncoder{}
+
+	ext := encoder.Extension()
+
+	if ext != "srt" {
+		t.Errorf("got %v, want %v", ext, "srt")
+	}
+}

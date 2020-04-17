@@ -1,6 +1,7 @@
 package pluralsight_test
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -8,12 +9,20 @@ import (
 	"github.com/ajdnik/decrypo/pluralsight"
 )
 
+var (
+	errMockOpen = errors.New("mock open error")
+)
+
 type mockOpen struct {
-	Arg string
+	Arg        string
+	ThrowError bool
 }
 
 func (mo *mockOpen) Open(f string) (*os.File, error) {
 	mo.Arg = f
+	if mo.ThrowError {
+		return nil, errMockOpen
+	}
 	return nil, nil
 }
 
@@ -67,20 +76,26 @@ func TestClipRepository_GetContent(t *testing.T) {
 }
 
 var getContentErrorsTest = []struct {
-	desc string
-	in   *decryptor.Clip
-	err  error
+	desc     string
+	in       *decryptor.Clip
+	throwErr bool
+	err      error
 }{
 	{"valid clip", &decryptor.Clip{
 		Module: &decryptor.Module{
 			Course: &decryptor.Course{},
 		},
-	}, nil},
-	{"no clip", nil, pluralsight.ErrClipUndefined},
-	{"clip without module", &decryptor.Clip{}, pluralsight.ErrModuleUndefined},
+	}, false, nil},
+	{"no clip", nil, false, pluralsight.ErrClipUndefined},
+	{"clip without module", &decryptor.Clip{}, false, pluralsight.ErrModuleUndefined},
 	{"module without course", &decryptor.Clip{
 		Module: &decryptor.Module{},
-	}, pluralsight.ErrCourseUndefined},
+	}, false, pluralsight.ErrCourseUndefined},
+	{"open failed", &decryptor.Clip{
+		Module: &decryptor.Module{
+			Course: &decryptor.Course{},
+		},
+	}, true, errMockOpen},
 }
 
 func TestClipRepository_GetContentErrors(t *testing.T) {
@@ -166,7 +181,7 @@ func TestClipRepository_ExistsErrors(t *testing.T) {
 		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}
-	for _, tt := range getContentErrorsTest {
+	for _, tt := range existsErrorsTest {
 		t.Run(tt.desc, func(t *testing.T) {
 			_, err := repo.Exists(tt.in)
 			if err != tt.err {
