@@ -40,12 +40,12 @@ var getContentTests = []struct {
 				ID: "e0ef9f4a-60f7-46be-b3c4-4daa641c27c9",
 			},
 		},
-	}, "C:\\Tmp\\e0ef9f4a-60f7-46be-b3c4-4daa641c27c9\\b5243d5f04d6e015c4407fbb4b16519b\\d6afc56e-daa3-4c03-91e3-8c9c9c915544.psv"},
+	}, "C:\\Tmp\\e0ef9f4a-60f7-46be-b3c4-4daa641c27c9\\tSQ9XwTW4BXEQH+7SxZRmw==\\d6afc56e-daa3-4c03-91e3-8c9c9c915544.psv"},
 	{"empty values", &decryptor.Clip{
 		Module: &decryptor.Module{
 			Course: &decryptor.Course{},
 		},
-	}, "C:\\Tmp\\b99834bc19bbad24580b3adfa04fb947\\.psv"},
+	}, "C:\\Tmp\\uZg0vBm7rSRYCzrfoE+5Rw==\\.psv"},
 }
 
 func TestClipRepository_GetContent(t *testing.T) {
@@ -115,19 +115,19 @@ var existsTests = []struct {
 				ID: "e0ef9f4a-60f7-46be-b3c4-4daa641c27c9",
 			},
 		},
-	}, "C:\\Tmp\\e0ef9f4a-60f7-46be-b3c4-4daa641c27c9\\b5243d5f04d6e015c4407fbb4b16519b\\d6afc56e-daa3-4c03-91e3-8c9c9c915544.psv"},
+	}, "C:\\Tmp\\e0ef9f4a-60f7-46be-b3c4-4daa641c27c9\\tSQ9XwTW4BXEQH+7SxZRmw==\\d6afc56e-daa3-4c03-91e3-8c9c9c915544.psv"},
 	{"empty values", &decryptor.Clip{
 		Module: &decryptor.Module{
 			Course: &decryptor.Course{},
 		},
-	}, "C:\\Tmp\\b99834bc19bbad24580b3adfa04fb947\\.psv"},
+	}, "C:\\Tmp\\uZg0vBm7rSRYCzrfoE+5Rw==\\.psv"},
 }
 
 func TestClipRepository_Exists(t *testing.T) {
 	open := mockOpen{}
 	exists := mockExists{}
 	repo := pluralsight.ClipRepository{
-		Path:       "/tmp/",
+		Path:       "C:\\Tmp\\",
 		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}
@@ -162,7 +162,7 @@ func TestClipRepository_ExistsErrors(t *testing.T) {
 	open := mockOpen{}
 	exists := mockExists{}
 	repo := pluralsight.ClipRepository{
-		Path:       "/tmp/",
+		Path:       "C:\\Tmp\\",
 		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}

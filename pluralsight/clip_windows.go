@@ -51,10 +51,10 @@ func (r *ClipRepository) Exists(clip *decryptor.Clip) (bool, error) {
 		return false, ErrClipUndefined
 	}
 	if clip.Module == nil {
-		return nil, ErrModuleUndefined
+		return false, ErrModuleUndefined
 	}
 	if clip.Module.Course == nil {
-		return nil, ErrCourseUndefined
+		return false, ErrCourseUndefined
 	}
 	cPath := filepath.Join(r.Path, clip.Module.Course.ID, computeModuleHash(clip.Module), fmt.Sprintf("%v.psv", clip.ID))
 	return r.FileExists(cPath), nil
