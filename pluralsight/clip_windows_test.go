@@ -99,15 +99,17 @@ var getContentErrorsTest = []struct {
 }
 
 func TestClipRepository_GetContentErrors(t *testing.T) {
-	open := mockOpen{}
 	exists := mockExists{}
 	repo := pluralsight.ClipRepository{
 		Path:       "C:\\Tmp\\",
-		FileOpen:   open.Open,
 		FileExists: exists.Exists,
 	}
 	for _, tt := range getContentErrorsTest {
 		t.Run(tt.desc, func(t *testing.T) {
+			open := mockOpen{
+				ThrowError: tt.throwErr,
+			}
+			repo.FileOpen = open.Open
 			_, err := repo.GetContent(tt.in)
 			if err != tt.err {
 				t.Errorf("got %v, want %v", err, tt.err)
